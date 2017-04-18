@@ -21,7 +21,7 @@ def getCats(token):
         try:
             resource=req.get(resource['paging']['next']).json()
         except KeyError:
-            print("Key error")
+            print("Finished getting pages")
             # When there are no more pages (['paging']['next']), break from the
             # loop and end the script.
             break
@@ -39,22 +39,30 @@ def getPagesList(user):
 #   return      dictionary of pages, each with it's own classification (0.0 < classification <= 1.0)
 #       {page1 : x, page2 : x, page4 : y, page6 : z}
 def classify(cats):
-    classification = dict()
+    from collections import defaultdict as ddict
+    classification = ddict()
     biggestCat = ""
     biggestCatLen = 0
-    for cat, pages in cats.iteritems():
+    for cat, pages in cats.items():
         if(len(pages) > biggestCatLen):
             biggestCat = cat
             biggestCatLen = len(pages)
-    for cat, pages in cats.iteritems():
+    for cat, pages in cats.items():
         classify = len(pages)/biggestCatLen
-        for i in len(pages):
-            classification[pages[i]] = classify
+        for i in pages:
+            classification[i] = classify
 
     return classification
 
 #START
+#this is my token (Pitágoras)
 token = "EAACEdEose0cBAD1aEd0H3y6aS8hQZCEs3787KaDzI5IoZCIopFgdRCpW82vQUkYkWkranW8rIO5jNTpanWudbJ6RhT8jjtrV4a0wvAFRwnS26RZB3FpdBlbZBnkznMOWWMZAgXR5WcfU6VKmeSwBjkyD6MAN0pT8HVWnnBs09kj46WZA821pVktmxEnuCvOYIi5XirZBWO9ZBdCUQRj9OmWE870amvlZCjvIZD"
 cats = getCats(token)
-print(cats)
-#classf = classify(cats)
+classf = classify(cats)
+#example print classifications
+count = 0
+for page, classification in classf.items():
+    print(page + ": " + str(classification))
+    count = count + 1
+    if(count > 20):
+        break
