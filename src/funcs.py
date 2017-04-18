@@ -27,9 +27,26 @@ def getCats(token):
             break
     return cats
 
-def getPagesList(user):
+def getPagesList(user, token):
+    from collections import defaultdict as ddict
+    import facebook as fb
+    import requests as req
     pages = list()
-
+    graph = fb.GraphAPI(access_token=token, version='2.7')
+    resource = graph.get_object(user+"/likes?fields=name")
+    #print(resource)
+    cats = dict()
+    while(True):
+        for page in resource['data']:
+            pages.append(page['id'])
+        # Attempt to make a request to the next page of data, if it exists.
+        try:
+            resource=req.get(resource['paging']['next']).json()
+        except KeyError:
+            print("Finished getting pages from user " + user)
+            # When there are no more pages (['paging']['next']), break from the
+            # loop and end the script.
+            break
     return pages
 
 #Classifies pages by categories, the category with more pages gets 1.0
@@ -56,13 +73,17 @@ def classify(cats):
 
 #START
 #this is my token (Pitágoras)
-token = "EAACEdEose0cBAD1aEd0H3y6aS8hQZCEs3787KaDzI5IoZCIopFgdRCpW82vQUkYkWkranW8rIO5jNTpanWudbJ6RhT8jjtrV4a0wvAFRwnS26RZB3FpdBlbZBnkznMOWWMZAgXR5WcfU6VKmeSwBjkyD6MAN0pT8HVWnnBs09kj46WZA821pVktmxEnuCvOYIi5XirZBWO9ZBdCUQRj9OmWE870amvlZCjvIZD"
-cats = getCats(token)
-classf = classify(cats)
+token = "EAACEdEose0cBAOIbVNcNo8ZBSYZBqv4eI85B6SG65AE4RvaZAO7Ixkz0gPknYsg2oWAMHDZAHhEQEA8JUQlxuvmK4NyQm6lKQYAsytVB6qMwYwHzWqZB0aGhaA7Wr8M5aYKGF6wvSao2E7cvvBfaVUcZCGmcwd99juf2gG7ZBZCQod2gVXuofv6ZCioanFmzASNEZD"
+#ID of "Aryan Dantas Gomes"
+otherPersonID = "100002541369604"
+otherUserPages = getPagesList(otherPersonID, token)
+print(otherUserPages)
+#cats = getCats(token)
+#classf = classify(cats)
 #example print classifications
-count = 0
-for page, classification in classf.items():
-    print(page + ": " + str(classification))
-    count = count + 1
-    if(count > 20):
-        break
+#count = 0
+#for page, classification in classf.items():
+#    print(page + ": " + str(classification))
+#    count = count + 1
+#    if(count > 20):
+#        break
