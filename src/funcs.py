@@ -27,6 +27,11 @@ def getCats(token):
             break
     return cats
 
+#Get the pages that a given user liked
+#   user    id of a user
+#   token   access token
+#   return  array of page IDs
+#       [page1, page2, page3...]
 def getPagesList(user, token):
     from collections import defaultdict as ddict
     import facebook as fb
@@ -71,15 +76,25 @@ def classify(cats):
 
     return classification
 
+def similarityWith(user, classification, token):
+    otherUserPages = getPagesList(user, token)
+    rate = 0.0
+    for page in otherUserPages:
+        if page in classification:
+            rate = rate + classification[page]
+    return rate
+
 #START
 #this is my token (Pitágoras)
 token = "EAACEdEose0cBAOIbVNcNo8ZBSYZBqv4eI85B6SG65AE4RvaZAO7Ixkz0gPknYsg2oWAMHDZAHhEQEA8JUQlxuvmK4NyQm6lKQYAsytVB6qMwYwHzWqZB0aGhaA7Wr8M5aYKGF6wvSao2E7cvvBfaVUcZCGmcwd99juf2gG7ZBZCQod2gVXuofv6ZCioanFmzASNEZD"
 #ID of "Aryan Dantas Gomes"
 otherPersonID = "100002541369604"
-otherUserPages = getPagesList(otherPersonID, token)
-print(otherUserPages)
-#cats = getCats(token)
-#classf = classify(cats)
+#otherUserPages = getPagesList(otherPersonID, token)
+#print(otherUserPages)
+cats = getCats(token)
+classf = classify(cats)
+similarity = similarityWith(otherPersonID, classf, token)
+print("Similarity with " + otherPersonID + ": " + str(similarity))
 #example print classifications
 #count = 0
 #for page, classification in classf.items():
