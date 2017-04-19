@@ -105,37 +105,43 @@ def getFriends(user, token):
 
 	return friends
 
-"""
-def getUsersList(user, token):
-	friends = getFriends(user, token)
-	usersList = []
-	for idFriend in friends: 
-		friendsOfFriends = getFriends(idFriend, token)
-		for idUser, name in friendsOfFriends.items():
-			if not idUser in friends:
-				usersList.append([idUser, name])
-	count = 0
-	while len(usersList) < 30 and len(usersList) >= count:
-		curruentID = usersList[count][0]
-		friendsCurrentID = getFriends(curruentID, token)
-		for idUser, name in friendsOfFriends.items():
-			if not idUser in friends:
-				usersList.append([idUser, name])	
-		count+=1
-	return usersList	
-"""
+def getUsersDict(user, token):
+    friends = getFriends(user, token)
+    ffriends = dict() 
+    listFFriends = []
+    for idFriend in friends: 
+        friendsOfFriends = getFriends(idFriend, token)
+        for idUser, name in friendsOfFriends.items():
+            if not idUser in ffriends and not idUser in friends:
+                ffriends[idUser] = name
+                listFFriends.append([idUser, name])
+    
+    count = 0
+    while len(listFFriends) < 400 and len(listFFriends) > count:
+        curruentID = listFFriends[count][0]
+        friendsCurrentID = getFriends(curruentID, token)
+        for idUser, name in friendsOfFriends.items():
+            if not idUser in ffriends:
+                ffriends[idUser] = name
+                listFFriends.append([idUser, name])	
+        count+=1
+    return ffriends	
+
 #START
-#this is my token (Pitágoras)
-token = "EAACEdEose0cBANzBpmP4ba9PNRcBz5ZAH3kDiMeCkz2dpVaFKqVZA20LelYfrfdIqkj3puIdG2kWl6yyiVZBkOZCi6PaObrmIQe4xFj1TN6ZA62IpYXjhf6k4fwZBREIlOuTRVFVHsQ9rtTxJ00KkczKmQjZAPaU9ESKv39PmwwmWG0wJtkV9dYdoi7qBMr9xcZD"
+#this is my token (Carol)
+token = "EAACEdEose0cBAA4uVmBfFvWvwxotAPMlPPtQVH3aFAYJTDYHbX0Wq88DzomDRB8nmabrI64wR3GvIKRapB4CBiyaeljF4ZBskIGZBrCIWuyZAOLgswZCPaVz8VnBsBAZCFUjE0X8qoiHXGRVfq7WCUqaZAMFq8w9rgJ38ZC7xoqhrZBXI0n8wnfAhv86juY5rBgZD"
  
-#ID of "Aryan Dantas Gomes"
-otherPersonID = "10208935375967359"
+#ID of "Pitagoras"
+#otherPersonID = "10208935375967359"
+
+users = getUsersDict('me', token)
+
 #otherUserPages = getPagesList(otherPersonID, token)
 #print(otherUserPages)
-cats = getCats(token)
-classf = classify(cats)
-similarity = similarityWith(otherPersonID, classf, token)
-print("Similarity with " + otherPersonID + ": " + str(similarity))
+#cats = getCats(token)
+#classf = classify(cats)
+#similarity = similarityWith(otherPersonID, classf, token)
+#print("Similarity with " + otherPersonID + ": " + str(similarity))
 #example print classifications
 #count = 0
 #for page, classification in classf.items():
