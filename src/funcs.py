@@ -84,11 +84,52 @@ def similarityWith(user, classification, token):
             rate = rate + classification[page]
     return rate
 
+# return dict { id1 : friend_name1, id2 : friend_name2 }
+def getFriends(user, token):
+	import facebook as fb
+	import requests as req
+	graph = fb.GraphAPI(access_token=token, version='2.7')
+	resource = graph.get_object("/" + user + "/friends")
+	friends = dict()
+	while(True):
+		for friend in resource['data']:
+			friends[friend['id']] = friend['name']
+			# Attempt to make a request to the next page of data, if it exists.
+		try:
+			resource=req.get(resource['paging']['next']).json()
+		except KeyError:
+			print("Finished getting friends from user " + user)
+			# When there are no more pages (['paging']['next']), break from the
+		# loop and end the script.
+			break
+
+	return friends
+
+"""
+def getUsersList(user, token):
+	friends = getFriends(user, token)
+	usersList = []
+	for idFriend in friends: 
+		friendsOfFriends = getFriends(idFriend, token)
+		for idUser, name in friendsOfFriends.items():
+			if not idUser in friends:
+				usersList.append([idUser, name])
+	count = 0
+	while len(usersList) < 30 and len(usersList) >= count:
+		curruentID = usersList[count][0]
+		friendsCurrentID = getFriends(curruentID, token)
+		for idUser, name in friendsOfFriends.items():
+			if not idUser in friends:
+				usersList.append([idUser, name])	
+		count+=1
+	return usersList	
+"""
 #START
 #this is my token (Pitágoras)
-token = "EAACEdEose0cBAOIbVNcNo8ZBSYZBqv4eI85B6SG65AE4RvaZAO7Ixkz0gPknYsg2oWAMHDZAHhEQEA8JUQlxuvmK4NyQm6lKQYAsytVB6qMwYwHzWqZB0aGhaA7Wr8M5aYKGF6wvSao2E7cvvBfaVUcZCGmcwd99juf2gG7ZBZCQod2gVXuofv6ZCioanFmzASNEZD"
+token = "EAACEdEose0cBANzBpmP4ba9PNRcBz5ZAH3kDiMeCkz2dpVaFKqVZA20LelYfrfdIqkj3puIdG2kWl6yyiVZBkOZCi6PaObrmIQe4xFj1TN6ZA62IpYXjhf6k4fwZBREIlOuTRVFVHsQ9rtTxJ00KkczKmQjZAPaU9ESKv39PmwwmWG0wJtkV9dYdoi7qBMr9xcZD"
+ 
 #ID of "Aryan Dantas Gomes"
-otherPersonID = "100002541369604"
+otherPersonID = "10208935375967359"
 #otherUserPages = getPagesList(otherPersonID, token)
 #print(otherUserPages)
 cats = getCats(token)
